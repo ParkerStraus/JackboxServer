@@ -25,18 +25,23 @@ jobs:
     # - name: Build project
     #   run: npm run build # if you have a build script
 
+    - name: Set up SSH
+      run: |
+        # Create a temporary SSH key file
+        echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > /tmp/ec2_key.pem
+        chmod 600 /tmp/ec2_key.pem
+        
+        # Add the EC2 host to known hosts
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
     - name: Deploy to EC2
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         EC2_HOST: ${{ secrets.EC2_HOST }}
         EC2_USER: ${{ secrets.EC2_USER }}
-        EC2_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+        EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
       run: |
-        # Create a temporary SSH key file
-        echo "${{ secrets.EC2_KEY }}" > /tmp/ec2_key.pem
-        chmod 600 /tmp/ec2_key.pem
-
         # Deploy the application
         scp -i /tmp/ec2_key.pem -r ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/app
         ssh -i /tmp/ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
