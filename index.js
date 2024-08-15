@@ -104,7 +104,7 @@ ConWss.on('connection', (ws) => {
             case "connect": 
                 console.log('Now Connecting');
                 //check if room is available
-                const index = CurrentRooms.findIndex(room => room.roomCode === data.data.room);
+                const index = CurrentRooms.findIndex(room => room.roomCode === data.data.room.toLowerCase());
                 console.log(index);
                 if(index != -1){
                     console.log("Found room");
