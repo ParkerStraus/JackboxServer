@@ -25,7 +25,7 @@ wss.on('connection', (ws) => {
 
     ws.on('message', (data) => {
         console.log('data received from client: ' + data);
-    
+        
         try {
             let msg = JSON.parse(data);
             console.log(msg);
@@ -43,7 +43,7 @@ wss.on('connection', (ws) => {
         } catch (err) {
             console.error("Failed to parse JSON: ", err);
         }
-    });
+    });  
     
 
     // Listen for the close event on the WebSocket connection
