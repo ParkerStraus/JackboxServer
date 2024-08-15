@@ -3,7 +3,7 @@ name: Deploy to AWS EC2
 on:
   push:
     branches:
-      - main  # Change this if your default branch is different
+      - main
 
 jobs:
   deploy:
@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'  # Match this with your Node.js version
+          node-version: '16'
 
       - name: Install dependencies
         run: npm install
@@ -34,10 +34,13 @@ jobs:
           chmod 600 private_key.pem
           scp -i private_key.pem -o StrictHostKeyChecking=no app.zip $USER@$HOST:/home/ubuntu/
           ssh -i private_key.pem -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
+            sudo apt-get update
+            sudo apt-get install -y unzip
             cd /home/ubuntu
             unzip -o app.zip
+            cd JackboxServer
             npm install
-            pm2 restart index.js || pm2 start index.js
+            pm2 start index.js --name "jackboxserver" || pm2 restart jackboxserver
             pm2 save
             exit
           EOF
