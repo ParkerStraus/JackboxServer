@@ -30,7 +30,10 @@ jobs:
         # Create a temporary SSH key file
         echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > /tmp/ec2_key.pem
         chmod 600 /tmp/ec2_key.pem
-        
+
+        # Create the .ssh directory if it doesn't exist
+        mkdir -p ~/.ssh
+
         # Add the EC2 host to known hosts
         ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
